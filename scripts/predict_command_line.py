@@ -75,11 +75,11 @@ unet_model = nrn_models.unet(nb_features=24,
                              activation='elu',
                              input_model=None)
 
-if args.model is None:
+if args['model'] is None:
     unet_model.load_weights(os.path.join(synthSR_home, 'models/SynthSR_v10_210712.h5'), by_name=True)
 else:
-    print('Using user-specified model: ' + args.model)
-    unet_model.load_weights(args.model, by_name=True)
+    print('Using user-specified model: ' + args['model'])
+    unet_model.load_weights(args['model'], by_name=True)
 
 # Prepare list of images to process
 path_images = os.path.abspath(args['path_images'])
@@ -125,7 +125,7 @@ for idx, (path_image, path_prediction) in enumerate(zip(images_to_segment, path_
     S = np.zeros([1, *W, 1])
     S[0, idx[0]:idx[0] + I.shape[1], idx[1]:idx[1] + I.shape[2], idx[2]:idx[2] + I.shape[3], :] = I
     
-    if args.disable_flipping:
+    if args['disable_flipping']:
         output = unet_model.predict(S)
     else:
         output = 0.5 * unet_model.predict(S) + 0.5 * np.flip(unet_model.predict(np.flip(S, axis=1)), axis=1)
